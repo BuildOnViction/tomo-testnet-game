@@ -1,3 +1,5 @@
 {
-  "MNEMONIC": ""
+  "MNEMONIC": "",
+  "WEB3_URI": "https://testnet.tomochain.com",
+  "WEB3_WS_URI": "wss://testnet.tomochain.com/ws"
 }
