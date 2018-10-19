@@ -1,7 +1,9 @@
 const Web3 = require('web3')
 const config = require('config')
 const fs = require('fs')
+const BigNumber = require('bignumber.js')
 const blockInfo = require('./files/startEndBlock')
+const users = require('./files/users')
 
 if (!('startBlock' in blockInfo ) && !('endBlock' in blockInfo)) {
     console.log('DO NOT know start & end block to check')
@@ -510,6 +512,11 @@ let ABI = [
 ]
 let contract = new web3.eth.Contract(ABI, '0x0000000000000000000000000000000000000088')
 
+let history = {}
+for (let i = 0; i < users.length; i++) {
+    history[users[i]] = []
+}
+
 contract.getPastEvents('allEvents', {
     filter: {},
     fromBlock: blockInfo.startBlock,
@@ -518,36 +525,36 @@ contract.getPastEvents('allEvents', {
     if (error) {
         console.log('error', error)
     }
-    let unVoteList = []
-    let voteList = []
+    let listVoteUnVote = []
     for(let i = 0; i < events.length; i++) {
         let event = events[i]
-        let item = {
-            txHash: event.transactionHash,
-            blockHash: event.blockHash,
-            voter: event.returnValues._voter,
-            candidate: event.returnValues._candidate,
-            cap: event.returnValues._cap
-        }
-        if (event.event === 'Vote') {
-            voteList.push(item)
-        } else if (event.event === 'Unvote') {
-            unVoteList.push(item)
+        let voter = String(event.returnValues._voter).toLowerCase()
+        let candidate = String(event.returnValues._candidate).toLowerCase()
+        let cap = new BigNumber(event.returnValues._cap)
+        let capTomo = cap.dividedBy(10 ** 18)
+        BigNumber.config({ EXPONENTIAL_AT: [-100, 100] })
+        if (users.indexOf(voter) >= 0){            
+            let item = {
+                txHash: event.transactionHash,
+                blockNumber: event.blockNumber,
+                event: event.event,
+                blockHash: event.blockHash,
+                voter: voter,
+                candidate: candidate,
+                cap: capTomo.toNumber()
+            }
+            history[voter].push(item)
+
         }
     }
-    fs.writeFile('./files/voteList.json', JSON.stringify(voteList), 'utf8', function (err) {
-        if (err){
-            console.log('write vote list to file has problem')
-        } else {
-            console.log('Write vote list to file is complete')
-        }
-    })
-    fs.writeFile('./files/unVoteList.json', JSON.stringify(unVoteList), 'utf8', function (err) {
-        if (err){
-            console.log('write unVote list to file has problem')
-        } else {
-            console.log('Write unVote list to file is complete')
-        }
-        process.exit(1)
-    })
+    for (let i = 0; i < users.length; i++) {
+        fs.writeFile('./files/history/' + users[i] + '.json', JSON.stringify(history[users[i]]), 'utf8', function (err) {
+            if (err){
+                console.log('write file ', users[i], 'has problem')
+            } else {
+                console.log('Write file ', users[i], 'is complete')
+            }
+        })
+    }
+
 })
