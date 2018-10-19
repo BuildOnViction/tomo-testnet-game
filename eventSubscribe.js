@@ -1,6 +1,7 @@
 const Web3 = require('web3')
 const config = require('config')
 const fs = require('fs')
+const BigNumber = require('bignumber.js')
 const blockInfo = require('./files/startEndBlock')
 const users = require('./files/users')
 
@@ -519,37 +520,33 @@ contract.getPastEvents('allEvents', {
     if (error) {
         console.log('error', error)
     }
-    let unVoteList = []
-    let voteList = []
+    let listVoteUnVote = []
     for(let i = 0; i < events.length; i++) {
         let event = events[i]
-        if (users.indexOf(event.returnValues._voter) >= 0){
+        let voter = String(event.returnValues._voter).toLowerCase()
+        let candidate = String(event.returnValues._candidate).toLowerCase()
+        let cap = new BigNumber(event.returnValues._cap)
+        let capTomo = cap.dividedBy(10 ** 18)
+        BigNumber.config({ EXPONENTIAL_AT: [-100, 100] })
+        if (users.indexOf(voter) >= 0){
             let item = {
                 txHash: event.transactionHash,
+                blockNumber: event.blockNumber,
+                event: event.event,
                 blockHash: event.blockHash,
-                voter: event.returnValues._voter,
-                candidate: event.returnValues._candidate,
-                cap: event.returnValues._cap
+                voter: voter,
+                candidate: candidate,
+                cap: capTomo.toNumber()
             }
-            if (event.event === 'Vote') {
-                voteList.push(item)
-            } else if (event.event === 'Unvote') {
-                unVoteList.push(item)
-            }
+            listVoteUnVote.push(item)
+
         }
     }
-    fs.writeFile('./files/voteList.json', JSON.stringify(voteList), 'utf8', function (err) {
+    fs.writeFile('./files/listVoteUnVote.json', JSON.stringify(listVoteUnVote), 'utf8', function (err) {
         if (err){
-            console.log('write vote list to file has problem')
+            console.log('write file has problem')
         } else {
-            console.log('Write vote list to file is complete')
-        }
-    })
-    fs.writeFile('./files/unVoteList.json', JSON.stringify(unVoteList), 'utf8', function (err) {
-        if (err){
-            console.log('write unVote list to file has problem')
-        } else {
-            console.log('Write unVote list to file is complete')
+            console.log('Write file is complete')
         }
         process.exit(1)
     })
