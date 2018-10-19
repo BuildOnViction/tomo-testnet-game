@@ -1,0 +1,25 @@
+{
+  "name": "tomo-game",
+  "version": "0.1.0",
+  "description": "A game for voting Masternode on TomoChain testnet",
+  "main": "index.js",
+  "dependencies": {
+    "config": "^2.0.1",
+    "web3": "^1.0.0-beta.36"
+  },
+  "devDependencies": {
+    "csv": "^4.0.0",
+    "truffle": "^4.1.14",
+    "truffle-hdwallet-provider": "0.0.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:tomochain/tomo-testnet-game.git"
+  },
+  "author": "Tomochain",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tomochain/tomo-testnet-game/issues"
+  },
+  "homepage": "https://github.com/tomochain/tomo-testnet-game#readme"
+}
