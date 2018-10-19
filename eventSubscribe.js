@@ -512,6 +512,11 @@ let ABI = [
 ]
 let contract = new web3.eth.Contract(ABI, '0x0000000000000000000000000000000000000088')
 
+let history = {}
+for (let i = 0; i < users.length; i++) {
+    history[users[i]] = []
+}
+
 contract.getPastEvents('allEvents', {
     filter: {},
     fromBlock: blockInfo.startBlock,
@@ -528,7 +533,7 @@ contract.getPastEvents('allEvents', {
         let cap = new BigNumber(event.returnValues._cap)
         let capTomo = cap.dividedBy(10 ** 18)
         BigNumber.config({ EXPONENTIAL_AT: [-100, 100] })
-        if (users.indexOf(voter) >= 0){
+        if (users.indexOf(voter) >= 0){            
             let item = {
                 txHash: event.transactionHash,
                 blockNumber: event.blockNumber,
@@ -538,16 +543,18 @@ contract.getPastEvents('allEvents', {
                 candidate: candidate,
                 cap: capTomo.toNumber()
             }
-            listVoteUnVote.push(item)
+            history[voter].push(item)
 
         }
     }
-    fs.writeFile('./files/listVoteUnVote.json', JSON.stringify(listVoteUnVote), 'utf8', function (err) {
-        if (err){
-            console.log('write file has problem')
-        } else {
-            console.log('Write file is complete')
-        }
-        process.exit(1)
-    })
+    for (let i = 0; i < users.length; i++) {
+        fs.writeFile('./files/history/' + users[i] + '.json', JSON.stringify(history[users[i]]), 'utf8', function (err) {
+            if (err){
+                console.log('write file ', users[i], 'has problem')
+            } else {
+                console.log('Write file ', users[i], 'is complete')
+            }
+        })
+    }
+
 })
