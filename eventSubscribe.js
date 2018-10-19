@@ -2,6 +2,7 @@ const Web3 = require('web3')
 const config = require('config')
 const fs = require('fs')
 const blockInfo = require('./files/startEndBlock')
+const users = require('./files/users')
 
 if (!('startBlock' in blockInfo ) && !('endBlock' in blockInfo)) {
     console.log('DO NOT know start & end block to check')
@@ -522,17 +523,19 @@ contract.getPastEvents('allEvents', {
     let voteList = []
     for(let i = 0; i < events.length; i++) {
         let event = events[i]
-        let item = {
-            txHash: event.transactionHash,
-            blockHash: event.blockHash,
-            voter: event.returnValues._voter,
-            candidate: event.returnValues._candidate,
-            cap: event.returnValues._cap
-        }
-        if (event.event === 'Vote') {
-            voteList.push(item)
-        } else if (event.event === 'Unvote') {
-            unVoteList.push(item)
+        if (users.indexOf(event.returnValues._voter) >= 0){
+            let item = {
+                txHash: event.transactionHash,
+                blockHash: event.blockHash,
+                voter: event.returnValues._voter,
+                candidate: event.returnValues._candidate,
+                cap: event.returnValues._cap
+            }
+            if (event.event === 'Vote') {
+                voteList.push(item)
+            } else if (event.event === 'Unvote') {
+                unVoteList.push(item)
+            }
         }
     }
     fs.writeFile('./files/voteList.json', JSON.stringify(voteList), 'utf8', function (err) {
