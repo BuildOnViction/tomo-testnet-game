@@ -2,7 +2,7 @@ const Web3 = require('web3')
 const config = require('config')
 const fs = require('fs')
 const BigNumber = require('bignumber.js')
-const blockInfo = require('./files/output/startEndBlock')
+const blockInfo = require('./files/input/startEndBlock')
 const users = require('./files/input/users')
 
 if (!('startBlock' in blockInfo ) && !('endBlock' in blockInfo)) {
