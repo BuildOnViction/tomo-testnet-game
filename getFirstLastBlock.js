@@ -26,7 +26,7 @@ async function run() {
         if (startBlock !== null && endBlock !== null) {
             let content = JSON.stringify({startBlock: startBlock, endBlock: endBlock})
             console.log('start & End Block is ', content)
-            fs.writeFile('./files/startEndBlock.json', content, 'utf8', function (err) {
+            fs.writeFile('./files/output/startEndBlock.json', content, 'utf8', function (err) {
                 if (err){
                     console.log('write File has problem')
                 } else {
