@@ -25,7 +25,7 @@ async function sendTomo() {
         let tx = await web3.eth.sendTransaction({
             to: walletAddress,
             from: currentWallet,
-            value: web3.utils.toWei('0.1', "ether"),
+            value: web3.utils.toWei(String(config.get('TOMO_EACH_USER')), "ether"),
             // gas: 100000,
             gasPrice: 100000,
         })
