@@ -1,12 +1,14 @@
 const fs = require('fs')
 const config = require('config')
 const axios = require('axios')
-const blockInfo = require('./files/input/startEndBlock')
 const userVoteAmount = require('./files/output/userVoteAmount')
 
+const startBlock = config.get('STARTBLOCK')
+const endBlock = config.get('ENDBLOCK')
+
 let listResult = []
-let startEpoch = Math.ceil(blockInfo.startBlock/config.get('BLOCK_PER_EPOCH'))
-let endEpoch = Math.ceil(blockInfo.endBlock/config.get('BLOCK_PER_EPOCH'))
+let startEpoch = Math.ceil(startBlock/config.get('BLOCK_PER_EPOCH'))
+let endEpoch = Math.ceil(endBlock/config.get('BLOCK_PER_EPOCH'))
 
 async function process() {
     for (let i = 0; i < userVoteAmount.length; i++) {
