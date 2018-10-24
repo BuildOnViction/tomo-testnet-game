@@ -2,13 +2,11 @@ const Web3 = require('web3')
 const config = require('config')
 const fs = require('fs')
 const BigNumber = require('bignumber.js')
-const blockInfo = require('./files/input/startEndBlock')
-const users = require('./files/input/users')
+const users = require('./files/input/userValid')
 
-if (!('startBlock' in blockInfo ) && !('endBlock' in blockInfo)) {
-    console.log('DO NOT know start & end block to check')
-    process.exit(1)
-}
+const startBlock = config.get('STARTBLOCK')
+const endBlock = config.get('ENDBLOCK')
+
 let web3 = new Web3(new Web3.providers.WebsocketProvider(config.get('WEB3_WS_URI')))
 
 let ABI = require('./files/input/tomoValidator')
@@ -21,8 +19,8 @@ for (let i = 0; i < users.length; i++) {
 
 contract.getPastEvents('allEvents', {
     filter: {},
-    fromBlock: blockInfo.startBlock,
-    toBlock: blockInfo.endBlock
+    fromBlock: startBlock,
+    toBlock: endBlock
 }, function (error, events) {
     if (error) {
         console.log('error', error)

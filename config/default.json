@@ -2,5 +2,8 @@
   "MNEMONIC": "",
   "WEB3_URI": "https://testnet.tomochain.com",
   "WEB3_WS_URI": "wss://testnet.tomochain.com/ws",
-  "BLOCK_PER_EPOCH": 900
+  "BLOCK_PER_EPOCH": 900,
+  "STARTBLOCK": 1000000,
+  "ENDBLOCK": 1800000,
+  "TOMO_EACH_USER": 1001
 }

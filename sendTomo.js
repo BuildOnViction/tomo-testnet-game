@@ -2,7 +2,7 @@ const HDWalletProvider = require('truffle-hdwallet-provider')
 const Web3 = require('web3')
 const config = require('config')
 const NonceTrackerSubProvider = require("web3-provider-engine/subproviders/nonce-tracker")
-const users = require('./files/input/users')
+const users = require('./files/input/userValid')
 
 let walletProvider = new HDWalletProvider(config.get('MNEMONIC'), config.get('WEB3_URI'))
 const nonceTracker = new NonceTrackerSubProvider()
@@ -25,7 +25,7 @@ async function sendTomo() {
         let tx = await web3.eth.sendTransaction({
             to: walletAddress,
             from: currentWallet,
-            value: web3.utils.toWei('0.1', "ether"),
+            value: web3.utils.toWei(String(config.get('TOMO_EACH_USER')), "ether"),
             // gas: 100000,
             gasPrice: 100000,
         })
