@@ -2,7 +2,7 @@ const HDWalletProvider = require('truffle-hdwallet-provider')
 const Web3 = require('web3')
 const config = require('config')
 const NonceTrackerSubProvider = require("web3-provider-engine/subproviders/nonce-tracker")
-const users = require('./files/input/users')
+const users = require('./files/input/userValid')
 
 let walletProvider = new HDWalletProvider(config.get('MNEMONIC'), config.get('WEB3_URI'))
 const nonceTracker = new NonceTrackerSubProvider()

@@ -3,7 +3,7 @@ const config = require('config')
 const fs = require('fs')
 const BigNumber = require('bignumber.js')
 const blockInfo = require('./files/input/startEndBlock')
-const users = require('./files/input/users')
+const users = require('./files/input/userValid')
 
 if (!('startBlock' in blockInfo ) && !('endBlock' in blockInfo)) {
     console.log('DO NOT know start & end block to check')

@@ -8,7 +8,8 @@
     "unVoteNumber": 0,
     "invalidFromTx": null,
     "amountBeforeInvalid": null,
-    "amountAfterInvalid": null
+    "amountAfterInvalid": null,
+    "totalReward": 18644.230265132905
   },
   {
     "user": "0x487d62d33467c4842c5e54eb370837e4e88bba0f",
@@ -19,7 +20,8 @@
     "unVoteNumber": 0,
     "invalidFromTx": null,
     "amountBeforeInvalid": null,
-    "amountAfterInvalid": null
+    "amountAfterInvalid": null,
+    "totalReward": 35723.97212203486
   },
   {
     "user": "0x6589b842c40cba19be4db7e9ce56329d8ea5c688",
@@ -30,7 +32,8 @@
     "unVoteNumber": 0,
     "invalidFromTx": null,
     "amountBeforeInvalid": null,
-    "amountAfterInvalid": null
+    "amountAfterInvalid": null,
+    "totalReward": 7217.390260516281
   },
   {
     "user": "0xa23cebfe11b4b81476b3a1d1516e6da6608585aa",
@@ -41,7 +44,8 @@
     "unVoteNumber": 0,
     "invalidFromTx": null,
     "amountBeforeInvalid": null,
-    "amountAfterInvalid": null
+    "amountAfterInvalid": null,
+    "totalReward": 0
   },
   {
     "user": "0xb473edf564da4419b1e9e8b6974dfdb610094c14",
@@ -52,7 +56,8 @@
     "unVoteNumber": 0,
     "invalidFromTx": null,
     "amountBeforeInvalid": null,
-    "amountAfterInvalid": null
+    "amountAfterInvalid": null,
+    "totalReward": 9281.083784316834
   },
   {
     "user": "0xc902cc2505faf4537e6252c1ec30a992748bc0d4",
@@ -63,7 +68,8 @@
     "unVoteNumber": 0,
     "invalidFromTx": null,
     "amountBeforeInvalid": null,
-    "amountAfterInvalid": null
+    "amountAfterInvalid": null,
+    "totalReward": 0
   },
   {
     "user": "0xca0f0f65369a6034b094c7fbf3ba855165da951b",
@@ -74,7 +80,8 @@
     "unVoteNumber": 0,
     "invalidFromTx": null,
     "amountBeforeInvalid": null,
-    "amountAfterInvalid": null
+    "amountAfterInvalid": null,
+    "totalReward": 0
   },
   {
     "user": "0xd5478df3c04f389749282c2844740e93ca6b09cb",
@@ -85,7 +92,8 @@
     "unVoteNumber": 0,
     "invalidFromTx": null,
     "amountBeforeInvalid": null,
-    "amountAfterInvalid": null
+    "amountAfterInvalid": null,
+    "totalReward": 0
   },
   {
     "user": "0xe4c3095efdd7163b86d745ad5c6d718a859eec9f",
@@ -96,7 +104,8 @@
     "unVoteNumber": 0,
     "invalidFromTx": null,
     "amountBeforeInvalid": null,
-    "amountAfterInvalid": null
+    "amountAfterInvalid": null,
+    "totalReward": 3405.1175209689072
   },
   {
     "user": "0xfe1c468eb19b6d15ecf18af0426df7c4746a8875",
@@ -107,6 +116,7 @@
     "unVoteNumber": 0,
     "invalidFromTx": null,
     "amountBeforeInvalid": null,
-    "amountAfterInvalid": null
+    "amountAfterInvalid": null,
+    "totalReward": 0
   }
 ]
