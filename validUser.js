@@ -3,7 +3,7 @@ const config = require('config')
 const fs = require('fs')
 const ABI = require('./files/input/tomoValidator')
 const users = require('./files/input/users')
-let sleep = (time) => new Promise((resolve) => setTimeout(resolve, time))
+
 async function run() {
     let web3 = await new Web3(await new Web3.providers.HttpProvider(config.get('WEB3_URI')))
 
