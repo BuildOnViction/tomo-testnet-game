@@ -4,7 +4,7 @@ A game for voting Masternode on TomoChain Testnet https://testnet.tomochain.com
 # Before start
 Copy config file and update
 ```
-cp config/default.json config.local.json
+cp config/default.json config/local.json
 ```
 `MNEMONIC`: Account send TOMO to list user valid
 
