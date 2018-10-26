@@ -14,6 +14,9 @@ async function run() {
     for (let i = 0; i < users.length; i++) {
         let isValid = true
         let user = users[i]
+        if (! (await web3.utils.isAddress(user))) {
+            continue
+        }
         console.log('process user', user)
         for (let j = 0; j < validators.length; j++) {
             let validator = String(validators[j]).toLowerCase()
