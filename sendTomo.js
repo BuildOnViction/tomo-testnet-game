@@ -11,11 +11,12 @@ nonceTracker.setEngine(walletProvider.engine)
 
 let web3 = new Web3(walletProvider)
 
-async function sendTomo() {
+async function sendTomo(listAddress) {
     let currentWallet = await web3.eth.getCoinbase()
 
-    for (let i = 0; i < users.length; i++) {
-        let walletAddress = users[i]
+    let listNotSuccess = []
+    for (let i = 0; i < listAddress.length; i++) {
+        let walletAddress = listAddress[i]
 
         console.log('send 0.1 TOMO from', currentWallet, 'to', walletAddress)
         try {
@@ -27,20 +28,20 @@ async function sendTomo() {
                 gasPrice: 100000,
             })
             console.log('   tx', tx.transactionHash, new Date())
-            let index = users.indexOf(walletAddress)
-            if (index > -1) {
-                users.splice(index, 1)
-            }
         } catch (e) {
+            listNotSuccess.push(walletAddress)
             console.error(e)
         }
+    }
+    if (listNotSuccess.length > 0) {
+        await sendTomo(listNotSuccess)
     }
 }
 async function currentProcess() {
     console.log('Start process', new Date())
-    while (users.length > 0) {
-        await sendTomo()
-    }
+
+    await sendTomo(users)
+
     console.log('End process', new Date())
     process.exit(1)
 }
