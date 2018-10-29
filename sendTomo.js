@@ -18,7 +18,7 @@ async function sendTomo(listAddress) {
     for (let i = 0; i < listAddress.length; i++) {
         let walletAddress = listAddress[i]
 
-        console.log('send 0.1 TOMO from', currentWallet, 'to', walletAddress)
+        console.log('send 1000 TOMO from', currentWallet, 'to', walletAddress)
         try {
             let tx = await web3.eth.sendTransaction({
                 to: walletAddress,
