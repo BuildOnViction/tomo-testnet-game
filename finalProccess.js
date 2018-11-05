@@ -1,22 +1,29 @@
 const fs = require('fs')
 const config = require('config')
-const axios = require('axios')
+const BigNumber = require('bignumber.js')
 const userVoteAmount = require('./files/output/userVoteAmount')
-
-const startBlock = config.get('STARTBLOCK')
-const endBlock = config.get('ENDBLOCK')
+const db = require('./models')
 
 let listResult = []
-let startEpoch = Math.ceil(startBlock/config.get('BLOCK_PER_EPOCH'))
-let endEpoch = Math.ceil(endBlock/config.get('BLOCK_PER_EPOCH'))
+let startEpoch = 2255
+let endEpoch = 2360
 
 async function process() {
     for (let i = 0; i < userVoteAmount.length; i++) {
         let voter = userVoteAmount[i]
         console.log('Process user ', voter.user)
-        let uri = 'http://localhost:3333/api/rewards/total/' + voter.user + '/' + startEpoch +'/' + endEpoch
-        let num = await axios.get(uri)
-        voter.totalReward = num.data.totalReward
+        let rewards = await db.Reward.find({
+            address: voter.user,
+            epoch: { $gte: startEpoch, $lte: endEpoch }
+        })
+
+        let total = new BigNumber(0)
+        for (let i = 0; i < rewards.length; i++) {
+            let rw = new BigNumber(rewards[i].reward)
+            rw = rw.dividedBy(10 ** 18)
+            total = total.plus(rw)
+        }
+        voter.totalReward = total
 
         listResult.push(voter)
     }

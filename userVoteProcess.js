@@ -1,6 +1,6 @@
 const fs = require('fs')
 
-const amountEachUser = 500
+const amountEachUser = 1000
 let listResult = []
 
 
