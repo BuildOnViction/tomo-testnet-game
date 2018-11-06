@@ -13,30 +13,30 @@ let contract = new web3.eth.Contract(ABI, '0x00000000000000000000000000000000000
 let defaultValidator = [
     {
         txHash: null,
-        blockNumber: 0,
+        blockNumber: 1,
         event: 'Propose',
         blockHash: null,
-        voter: '',
+        voter: '0x487d62d33467c4842c5e54eb370837e4e88bba0f',
         owner: '0x487d62d33467c4842c5e54eb370837e4e88bba0f',
         candidate: '0xfc5571921c6d3672e13b58ea23dea534f2b35fa0',
         cap: 50000
     },
     {
         txHash: null,
-        blockNumber: 0,
+        blockNumber: 1,
         event: 'Propose',
         blockHash: null,
-        voter: '',
+        voter: '0x487d62d33467c4842c5e54eb370837e4e88bba0f',
         owner: '0x487d62d33467c4842c5e54eb370837e4e88bba0f',
         candidate: '0xf99805b536609cc03acbb2604dfac11e9e54a448',
         cap: 50000
     },
     {
         txHash: null,
-        blockNumber: 0,
+        blockNumber: 1,
         event: 'Propose',
         blockHash: null,
-        voter: '',
+        voter: '0x487d62d33467c4842c5e54eb370837e4e88bba0f',
         owner: '0x487d62d33467c4842c5e54eb370837e4e88bba0f',
         candidate: '0x31b249fe6f267aa2396eb2dc36e9c79351d97ec5',
         cap: 50000
