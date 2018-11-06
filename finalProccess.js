@@ -1,16 +1,17 @@
 const fs = require('fs')
 const config = require('config')
 const BigNumber = require('bignumber.js')
-const userVoteAmount = require('./files/output/userVoteAmount')
+const userValid = require('./files/input/userValid')
 const db = require('./models')
 
 let listResult = []
 let startEpoch = 2255
-let endEpoch = 2360
+let endEpoch = 2400
 
-async function process() {
-    for (let i = 0; i < userVoteAmount.length; i++) {
-        let voter = userVoteAmount[i]
+async function main() {
+    for (let i = 0; i < userValid.length; i++) {
+        let voter = {}
+        voter.user = userValid[i]
         console.log('Process user ', voter.user)
         let rewards = await db.Reward.find({
             address: voter.user,
@@ -20,10 +21,13 @@ async function process() {
         let total = new BigNumber(0)
         for (let i = 0; i < rewards.length; i++) {
             let rw = new BigNumber(rewards[i].reward)
-            rw = rw.dividedBy(10 ** 18)
+            if (rw.toString() === 'NaN') {
+                console.log(rewards[i])
+            }
+            rw = rw
             total = total.plus(rw)
         }
-        voter.totalReward = total
+        voter.totalReward = total.toNumber()
 
         listResult.push(voter)
     }
@@ -33,8 +37,9 @@ async function process() {
         } else {
             console.log('Write file result.json is complete')
         }
+        process.exit(1)
     })
 }
 
-process()
+main()
 
