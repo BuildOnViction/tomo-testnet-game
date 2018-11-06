@@ -1,60 +1,63 @@
-const fs = require('fs')
+const db = require('./models')
 
-const amountEachUser = 500
-let listResult = []
+async function main() {
 
+    let histories = await db.VoteHistory.find().sort({blockNumber: 1})
 
-fs.readdirSync('./files/output/history/')
-    .filter(function (file) {
-        return (file.indexOf('.') !== 0) && (file !== '.gitignore')
-    })
-    .forEach(function (file) {
-        let userHistory = require('./files/output/history/' + file)
-        let user = file.replace('.json', '')
-        let valid = true
-        let amountAvailable = amountEachUser
-        let amountVote = 0
-        let voteNumber = 0
-        let unVoteNumber = 0
-        let txInvalid = null
-        let amountBeforeInvalid = 0
-        let amountAfterInvalid = 0
+    console.log('There are %s histories', histories.length)
+    for (let i = 0; i < histories.length; i++) {
+        let history = histories[i]
+        console.log('process item %s event %s, voter %s, amount %s', i, history.event, history.voter, history.cap)
 
-        for (let i = 0 ; i < userHistory.length; i++) {
-            let event = userHistory[i]
-            amountBeforeInvalid = amountAvailable
-            if (event.event === 'Vote') {
-                amountAvailable -= event.cap
-                amountVote += event.cap
-                voteNumber += 1
-            } else {
-                amountAvailable += event.cap
-                amountVote -= event.cap
-                unVoteNumber += 1
+        if (history.event === 'Propose') {
+            let data = {
+                voter: history.owner,
+                candidate: history.candidate,
+                epoch: Math.ceil(history.blockNumber/900),
+                voteAmount: history.cap
             }
-            amountAfterInvalid = amountAvailable
-            if (amountAvailable < 0 || amountVote < 0 || amountVote > amountEachUser) {
-                valid = false
-                txInvalid = event.txHash
-            }
+            await db.UserVoteAmount.create(data)
+        } else if (history.event === 'Vote') {
+            let h = await db.UserVoteAmount.findOne({
+                voter: history.voter,
+                candidate: history.candidate
+            }).sort({epoch: -1})
+            await db.UserVoteAmount.findOneAndUpdate({
+                voter: history.voter,
+                candidate: history.candidate,
+                epoch: Math.floor(history.blockNumber/900)
+            }, {
+                voteAmount: (h ? h.voteAmount : 0) + history.cap
+            }, { upsert: true, new: true })
+
+        } else if (history.event === 'Unvote') {
+            let h = await db.UserVoteAmount.findOne({
+                voter: history.voter,
+                candidate: history.candidate
+            }).sort({epoch: -1})
+            await db.UserVoteAmount.updateOne({
+                voter: history.voter,
+                candidate: history.candidate,
+                epoch: Math.floor(history.blockNumber/900)
+            }, {
+                voteAmount: (h ? h.voteAmount : 0) - history.cap
+            }, { upsert: true, new: true })
+
+        } else if (history.event === 'Resign') {
+            let h = await db.UserVoteAmount.findOne({
+                voter: history.voter,
+                candidate: history.candidate
+            }).sort({epoch: -1})
+            await db.UserVoteAmount.updateOne({
+                voter: history.voter,
+                candidate: history.candidate,
+                epoch: Math.ceil(history.blockNumber/900)
+            }, {
+                voteAmount: (h ? h.voteAmount : 0) - history.cap
+            }, { upsert: true, new: true })
         }
-        listResult.push({
-            user: user,
-            valid: valid,
-            amountVote: amountVote,
-            amountAvailable: amountAvailable,
-            voteNumber: voteNumber,
-            unVoteNumber: unVoteNumber,
-            invalidFromTx: txInvalid,
-            amountBeforeInvalid: txInvalid ? amountBeforeInvalid : null,
-            amountAfterInvalid: txInvalid ? amountAfterInvalid : null,
-        })
-    })
-
-fs.writeFile('./files/output/userVoteAmount.json', JSON.stringify(listResult), 'utf8', function (err) {
-    if (err){
-        console.log('write file has problem')
-    } else {
-        console.log('Write file userVoteAmount.json is complete')
     }
-})
+    process.exit(1)
+}
+
+main()

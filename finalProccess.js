@@ -1,22 +1,33 @@
 const fs = require('fs')
 const config = require('config')
-const axios = require('axios')
-const userVoteAmount = require('./files/output/userVoteAmount')
-
-const startBlock = config.get('STARTBLOCK')
-const endBlock = config.get('ENDBLOCK')
+const BigNumber = require('bignumber.js')
+const userValid = require('./files/input/userValid')
+const db = require('./models')
 
 let listResult = []
-let startEpoch = Math.ceil(startBlock/config.get('BLOCK_PER_EPOCH'))
-let endEpoch = Math.ceil(endBlock/config.get('BLOCK_PER_EPOCH'))
+let startEpoch = 2255
+let endEpoch = 2400
 
-async function process() {
-    for (let i = 0; i < userVoteAmount.length; i++) {
-        let voter = userVoteAmount[i]
+async function main() {
+    for (let i = 0; i < userValid.length; i++) {
+        let voter = {}
+        voter.user = userValid[i]
         console.log('Process user ', voter.user)
-        let uri = 'http://localhost:3333/api/rewards/total/' + voter.user + '/' + startEpoch +'/' + endEpoch
-        let num = await axios.get(uri)
-        voter.totalReward = num.data.totalReward
+        let rewards = await db.Reward.find({
+            address: voter.user,
+            epoch: { $gte: startEpoch, $lte: endEpoch }
+        })
+
+        let total = new BigNumber(0)
+        for (let i = 0; i < rewards.length; i++) {
+            let rw = new BigNumber(rewards[i].reward)
+            if (rw.toString() === 'NaN') {
+                console.log(rewards[i])
+            }
+            rw = rw
+            total = total.plus(rw)
+        }
+        voter.totalReward = total.toNumber()
 
         listResult.push(voter)
     }
@@ -26,8 +37,9 @@ async function process() {
         } else {
             console.log('Write file result.json is complete')
         }
+        process.exit(1)
     })
 }
 
-process()
+main()
 

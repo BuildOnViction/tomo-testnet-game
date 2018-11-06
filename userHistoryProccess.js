@@ -1,60 +1,84 @@
 const Web3 = require('web3')
 const config = require('config')
-const fs = require('fs')
 const BigNumber = require('bignumber.js')
-const users = require('./files/input/userValid')
+const db = require('./models')
 
-const startBlock = config.get('STARTBLOCK')
-const endBlock = config.get('ENDBLOCK')
 
 let web3 = new Web3(new Web3.providers.WebsocketProvider(config.get('WEB3_WS_URI')))
 
 let ABI = require('./files/input/tomoValidator')
 let contract = new web3.eth.Contract(ABI, '0x0000000000000000000000000000000000000088')
 
-let history = {}
-for (let i = 0; i < users.length; i++) {
-    history[users[i]] = []
-}
+
+let defaultValidator = [
+    {
+        txHash: null,
+        blockNumber: 0,
+        event: 'Propose',
+        blockHash: null,
+        voter: '',
+        owner: '0x487d62d33467c4842c5e54eb370837e4e88bba0f',
+        candidate: '0xfc5571921c6d3672e13b58ea23dea534f2b35fa0',
+        cap: 50000
+    },
+    {
+        txHash: null,
+        blockNumber: 0,
+        event: 'Propose',
+        blockHash: null,
+        voter: '',
+        owner: '0x487d62d33467c4842c5e54eb370837e4e88bba0f',
+        candidate: '0xf99805b536609cc03acbb2604dfac11e9e54a448',
+        cap: 50000
+    },
+    {
+        txHash: null,
+        blockNumber: 0,
+        event: 'Propose',
+        blockHash: null,
+        voter: '',
+        owner: '0x487d62d33467c4842c5e54eb370837e4e88bba0f',
+        candidate: '0x31b249fe6f267aa2396eb2dc36e9c79351d97ec5',
+        cap: 50000
+    },
+]
+db.VoteHistory.insertMany(defaultValidator)
 
 contract.getPastEvents('allEvents', {
     filter: {},
-    fromBlock: startBlock,
-    toBlock: endBlock
+    fromBlock: 0,
+    toBlock: 2205900
 }, function (error, events) {
     if (error) {
         console.log('error', error)
     }
     let listVoteUnVote = []
+    console.log('there are %s events', events.length)
     for(let i = 0; i < events.length; i++) {
         let event = events[i]
-        let voter = String(event.returnValues._voter).toLowerCase()
-        let candidate = String(event.returnValues._candidate).toLowerCase()
-        let cap = new BigNumber(event.returnValues._cap)
+        let voter = String(event.returnValues._voter || '').toLowerCase()
+        let owner = String(event.returnValues._owner || '').toLowerCase()
+        let candidate = String(event.returnValues._candidate || '').toLowerCase()
+        let cap = new BigNumber(event.returnValues._cap || 0)
         let capTomo = cap.dividedBy(10 ** 18)
         BigNumber.config({ EXPONENTIAL_AT: [-100, 100] })
-        if (users.indexOf(voter) >= 0){            
-            let item = {
-                txHash: event.transactionHash,
-                blockNumber: event.blockNumber,
-                event: event.event,
-                blockHash: event.blockHash,
-                voter: voter,
-                candidate: candidate,
-                cap: capTomo.toNumber()
-            }
-            history[voter].push(item)
-
+        let item = {
+            txHash: event.transactionHash,
+            blockNumber: event.blockNumber,
+            event: event.event,
+            blockHash: event.blockHash,
+            voter: voter,
+            owner: owner,
+            candidate: candidate,
+            cap: capTomo.toNumber()
+        }
+        listVoteUnVote.push(item)
+        if (listVoteUnVote.length >= 5000) {
+            db.VoteHistory.insertMany(listVoteUnVote)
+            listVoteUnVote = []
         }
     }
-    for (let i = 0; i < users.length; i++) {
-        fs.writeFile('./files/output/history/' + users[i] + '.json', JSON.stringify(history[users[i]]), 'utf8', function (err) {
-            if (err){
-                console.log('write file ', users[i], 'has problem')
-            } else {
-                console.log('Write file ', users[i], 'is complete')
-            }
-        })
+    if (listVoteUnVote.length > 0) {
+        db.VoteHistory.insertMany(listVoteUnVote)
     }
-
 })
