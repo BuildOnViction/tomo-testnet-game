@@ -4,7 +4,7 @@ async function main() {
     let lastRow = await db.UserVoteAmount.findOne().sort({epoch: -1})
     if (lastRow) {
         let lastEpoch = lastRow.epoch
-        for (let i = 1; i<= lastEpoch; i++) {
+        for (let i = 0; i<= lastEpoch; i++) {
             console.log('Process epoch', i)
             let voteInEpoch = await db.UserVoteAmount.find({epoch: i})
             let data = []

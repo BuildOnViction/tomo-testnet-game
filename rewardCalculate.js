@@ -97,7 +97,7 @@ async function reward(epoch, validatorAddress, validatorSignNumber, totalRewardV
     }
 }
  async function run() {
-     for (let i = 2255; i <= 2541; i++) {
+     for (let i = 1; i <= 2482; i++) {
          await calculate(i)
      }
      process.exit(1)
